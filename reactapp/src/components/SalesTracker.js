@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from "react-router-dom";
 import NavbarComp from './NavbarComp';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye,faPencil,faTrashCan } from '@fortawesome/free-solid-svg-icons';
+
 
 const SalesTracker = () => {
   const [sales, setSales] = useState([]);
@@ -20,6 +24,11 @@ const SalesTracker = () => {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const deleteSales = async (id) => {
+    await axios.delete(`http://localhost:8081/api/delete/${id}`);
+    fetchSales();
   };
 
   const calculateRevenue = (salesData) => {
@@ -43,6 +52,13 @@ const SalesTracker = () => {
     <NavbarComp />
     <div className='container'>
       <div className='py-4'>
+      <div className="float-container">
+          <div className="float-contain" >
+      <Link className="btn btn-dark" to="/addsales">
+            Add Sales Details
+          </Link>
+          </div>
+          </div>
       <table className='table border shadow'>
         <thead>
           <tr>
@@ -51,6 +67,7 @@ const SalesTracker = () => {
             <th>Quantity</th>
             <th>Price</th>
             <th>Timestamp</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -61,6 +78,35 @@ const SalesTracker = () => {
               <td>{sale.quantity}</td>
               <td>{sale.price}</td>
               <td>{sale.timestamp}</td>
+              <td>
+                  <Link
+                    className="btn"
+                    to={`/viewsales/${sales.id}`}
+                  >
+                    <span style={{ color: "grey" }}>
+                    <FontAwesomeIcon icon={faEye}/>
+                    </span>
+                   
+                  </Link>
+                  <Link
+                    className="btn"
+                    to={`/editsales/${sales.id}`}
+                  >
+                    <span style={{ color: "#fcc838" }}>
+                    <FontAwesomeIcon icon={faPencil} />
+                    </span>
+                    
+                  </Link>
+                  <button
+                    className="btn"
+                    onClick={() => deleteSales(sales.id)}
+                  >
+                    <span style={{ color: "#f54040" }}>
+                    <FontAwesomeIcon icon={faTrashCan} />
+                      </span>
+                    
+                  </button>
+                </td>
             </tr>
           ))}
         </tbody>
